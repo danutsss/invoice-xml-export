@@ -1,0 +1,6 @@
+/ucrm.json
+/data
+/vendor
+
+# Environment variables file.
+.env
