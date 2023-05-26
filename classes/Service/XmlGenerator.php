@@ -114,6 +114,7 @@ class XmlGenerator
     private function createInvoiceDetails(DOMDocument $xmlDoc, DOMElement $invoiceRoot, string $invoiceNumber,  string $fullName, float $invoiceAmount, bool $tva): void
     {
         $tvaAmount = $invoiceAmount - ($invoiceAmount / 1.19);
+        $invoiceWithoutTva = $tva ? $invoiceAmount - $tvaAmount : $invoiceAmount;
 
         $invoiceDetails = $invoiceRoot->appendChild($xmlDoc->createElement('Detalii'));
         $invoiceContent = $invoiceDetails->appendChild($xmlDoc->createElement('Continut'));
@@ -125,8 +126,8 @@ class XmlGenerator
         $invoiceLine->appendChild($xmlDoc->createElement('InformatiiSuplimentare'));
         $invoiceLine->appendChild($xmlDoc->createElement('UM', 'buc'));
         $invoiceLine->appendChild($xmlDoc->createElement('Cantitate', '1'));
-        $invoiceLine->appendChild($xmlDoc->createElement('Pret', sprintf('%.2f', $invoiceAmount)));
-        $invoiceLine->appendChild($xmlDoc->createElement('Valoare', sprintf('%.2f', $invoiceAmount)));
+        $invoiceLine->appendChild($xmlDoc->createElement('Pret', sprintf('%.2f', $invoiceWithoutTva)));
+        $invoiceLine->appendChild($xmlDoc->createElement('Valoare', sprintf('%.2f', $invoiceWithoutTva)));
         $invoiceLine->appendChild($xmlDoc->createElement('ProcTVA', $tva === true ? '19' : '0'));
         $invoiceLine->appendChild($xmlDoc->createElement('TVA', $tva === true ? sprintf('%.2f', $tvaAmount) : '0'));
     }
@@ -134,9 +135,10 @@ class XmlGenerator
     private function createInvoiceSummary(DOMDocument $xmlDoc, DOMElement $invoiceRoot, float $invoiceAmount, bool $tva): void
     {
         $tvaAmount = $invoiceAmount - ($invoiceAmount / 1.19);
+        $invoiceWithoutTva = $tva ? $invoiceAmount - $tvaAmount : $invoiceAmount;
 
         $invoiceSummary = $invoiceRoot->appendChild($xmlDoc->createElement('Sumar'));
-        $invoiceSummary->appendChild($xmlDoc->createElement('TotalValoare', sprintf('%.2f', $invoiceAmount)));
+        $invoiceSummary->appendChild($xmlDoc->createElement('TotalValoare', sprintf('%.2f', $invoiceWithoutTva)));
         $invoiceSummary->appendChild($xmlDoc->createElement('TotalTVA', $tva === true ? sprintf('%.2f', $tvaAmount) : '0'));
         $invoiceSummary->appendChild($xmlDoc->createElement('TotalFactura', sprintf('%.2f', $invoiceAmount)));
     }
