@@ -4,3 +4,6 @@
 
 # Environment variables file.
 .env
+
+# .zip files.
+*.zip
